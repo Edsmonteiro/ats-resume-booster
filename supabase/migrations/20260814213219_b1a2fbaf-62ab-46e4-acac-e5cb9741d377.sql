@@ -1,0 +1,1 @@
+ALTER TABLE public.preferencias_busca ADD COLUMN IF NOT EXISTS contratos text[] NOT NULL DEFAULT '{}'::text[];

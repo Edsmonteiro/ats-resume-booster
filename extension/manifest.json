@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Eu Passo — compatibilidade de vagas no LinkedIn",
+  "version": "1.5.0",
+  "description": "Le a vaga aberta no navegador (LinkedIn, Gupy, Indeed e outros) e mostra sua compatibilidade e uma carta de apresentacao, usando o seu curriculo do Eu Passo.",
+  "version_name": "1.5.0",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "https://eupasso.lovable.app/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Eu Passo"
+  },
+  "options_page": "options.html"
+}

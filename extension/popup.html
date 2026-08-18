@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Eu Passo</title>
+    <style>
+      :root { color-scheme: light; }
+      body {
+        width: 380px; margin: 0; padding: 16px;
+        font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: #10312f; background: #f6f8f8;
+      }
+      h1 { margin: 0 0 2px; font-size: 15px; }
+      p.sub { margin: 0 0 12px; font-size: 12px; color: #5b716f; }
+      textarea, input[type="text"] {
+        width: 100%; box-sizing: border-box; resize: vertical;
+        font-family: ui-monospace, monospace; font-size: 11px; padding: 8px;
+        border: 1px solid #cfdad9; border-radius: 8px; background: #fff;
+      }
+      textarea { min-height: 90px; }
+      button {
+        width: 100%; margin-top: 8px; padding: 9px 12px; border: 0; border-radius: 8px;
+        background: #14706a; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+      }
+      button.sec { background: #fff; color: #14706a; border: 1px solid #cfdad9; }
+      button:disabled { opacity: .6; cursor: progress; }
+      .score { font-size: 32px; font-weight: 700; }
+      .card { background: #fff; border: 1px solid #e2eae9; border-radius: 10px; padding: 12px; margin-top: 12px; }
+      .lab { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a8f8d; margin: 0 0 4px; }
+      ul { margin: 6px 0 0; padding-left: 18px; font-size: 12px; }
+      li { margin-bottom: 3px; }
+      .erro { color: #a33; font-size: 12px; margin-top: 8px; }
+      .ok { color: #14706a; font-size: 12px; }
+      details summary { cursor: pointer; font-size: 12px; color: #14706a; }
+      .conta {
+        display: flex; align-items: center; gap: 8px; justify-content: space-between;
+        background: #fff; border: 1px solid #e2eae9; border-radius: 10px;
+        padding: 8px 10px; font-size: 12px; margin-bottom: 10px;
+      }
+      .conta b { font-weight: 600; }
+      .conta button { width: auto; margin: 0; padding: 5px 9px; font-size: 11px; }
+      .meta { font-size: 11px; color: #5b716f; margin-top: 6px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+      .chip { background: #eef4f3; border-radius: 999px; padding: 2px 8px; font-size: 11px; }
+    </style>
+  </head>
+  <body>
+    <h1>Eu Passo</h1>
+    <p class="sub">Abra a vaga (LinkedIn, Gupy, Indeed…) e clique em Analisar.</p>
+
+    <div class="conta" id="conta">
+      <span id="contaTexto">Verificando conexão…</span>
+      <button class="sec" id="contaBotao" style="display:none"></button>
+    </div>
+
+    <details id="loginBox">
+      <summary>Conectar minha conta Eu Passo</summary>
+      <p class="meta">
+        Gere um código em eupasso.lovable.app/extensao e cole abaixo. Assim a extensão usa o
+        currículo salvo na sua conta e pode salvar vagas nas suas candidaturas.
+      </p>
+      <input type="text" id="token" placeholder="Cole aqui o código de conexão" />
+      <button class="sec" id="conectar">Conectar conta</button>
+    </details>
+
+    <details id="cvBox">
+      <summary>Meu currículo (uso sem conta)</summary>
+      <textarea id="cv" placeholder="Cole aqui o texto do seu currículo (fica salvo apenas neste navegador)."></textarea>
+      <button class="sec" id="salvar">Salvar currículo</button>
+    </details>
+
+    <details id="manualBox">
+      <summary>Colar a descrição da vaga manualmente</summary>
+      <textarea id="manual" placeholder="Se a leitura automática falhar, cole aqui o texto da vaga."></textarea>
+    </details>
+
+    <button id="analisar">Analisar esta vaga</button>
+    <label style="display:block;margin-top:8px;font-size:12px">
+      <input type="checkbox" id="comCarta" /> gerar também a carta de apresentação
+    </label>
+
+    <button class="sec" id="config">Configurar seletores por site</button>
+
+    <div id="erro" class="erro"></div>
+    <div id="saida"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+ALTER TABLE public.vagas_usuario ADD COLUMN IF NOT EXISTS aberta_em timestamptz;
