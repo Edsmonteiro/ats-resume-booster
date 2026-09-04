@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
@@ -126,16 +125,17 @@ function AuthPage() {
 
   async function entrarComGoogle() {
     setOcupado(true);
-    const resultado = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
     });
-    if (resultado.error) {
+
+    if (error) {
       setOcupado(false);
-      toast.error("Não foi possível entrar com o Google.");
-      return;
+      toast.error("Não foi possível entrar com o Google: " + error.message);
     }
-    if (resultado.redirected) return;
-    void navigate({ to: "/", replace: true });
   }
 
   return (
@@ -277,10 +277,10 @@ function AuthPage() {
                         id="nova-senha"
                         type="password"
                         required
+                        minLength={6}
                         autoComplete="new-password"
                         value={novaSenha}
                         onChange={(e) => setNovaSenha(e.target.value)}
-                        placeholder="Mínimo de 6 caracteres"
                       />
                     </div>
                     <Button type="submit" className="w-full" disabled={ocupado}>
