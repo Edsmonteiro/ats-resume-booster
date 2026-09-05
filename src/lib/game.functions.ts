@@ -80,7 +80,10 @@ export const gerarPergunta = createServerFn({ method: "POST" })
 export const avaliarResposta = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => avaliarRespostaInput.parse(input))
-  .handler(async ({ data }): Promise<Avaliacao> => {
+  .handler(async ({ data, context }): Promise<Avaliacao> => {
+    const bloqueio = await checarRecurso(context.userId, "quest");
+    if (bloqueio) throw new Error(bloqueio.error);
+
     const { object } = await generateObject({
       model: modelo(),
       providerOptions,
