@@ -21,9 +21,9 @@ export const Route = createFileRoute("/ia")({
           "Transparência sobre o que a IA gera, seus limites e o que continua sob sua decisão.",
       },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "https://eupasso.lovable.app/ia" }],
+    links: [{ rel: "canonical", href: "https://eu-passo.netlify.app/ia" }],
   }),
   component: PaginaIa,
 });
@@ -45,18 +45,19 @@ const blocos = [
     titulo: "Limites conhecidos",
     itens: [
       "A nota é uma estimativa: cada empresa configura o próprio ATS de um jeito.",
-      "Modelos podem interpretar mal trechos ambíguos ou muito abreviados.",
-      "A cobertura de vagas depende do que os portais publicam abertamente.",
+      "Modelos podem interpretar mal trechos ambíguos, omitir informações ou gerar afirmações incorretas.",
+      "A cobertura de vagas depende do que as fontes externas disponibilizam.",
       "Vagas encerradas podem aparecer até a próxima revalidação.",
     ],
   },
   {
     icone: ShieldCheck,
-    titulo: "O que nunca fazemos",
+    titulo: "Como reduzimos riscos",
     itens: [
-      "Inventar experiências, formações ou resultados que não estão no seu material.",
-      "Candidatar você automaticamente a qualquer vaga.",
-      "Enviar seus dados a recrutadores ou anunciantes.",
+      "Os prompts orientam a IA a não inventar experiências, formações, empresas, datas ou resultados.",
+      "As funções usam apenas o conteúdo necessário à tarefa solicitada pelo usuário.",
+      "O Eu Passo não envia candidaturas sem uma ação explícita do usuário.",
+      "Resultados de IA devem ser revisados antes de uso em uma candidatura real.",
     ],
   },
   {
@@ -64,8 +65,9 @@ const blocos = [
     titulo: "Sua parte",
     itens: [
       "Leia o documento gerado antes de enviar — sempre.",
-      "Confira números, datas e nomes de empresas.",
-      "Ajuste o tom para o seu jeito de escrever: recrutador percebe texto genérico.",
+      "Confira números, datas, nomes de empresas e qualquer afirmação sobre sua experiência.",
+      "Remova dados pessoais ou sensíveis que não sejam necessários para a análise.",
+      "Ajuste o tom para o seu jeito de escrever e para a vaga em questão.",
     ],
   },
 ];
@@ -90,8 +92,7 @@ function PaginaIa() {
             Como usamos inteligência artificial
           </h1>
           <p className="mt-2 max-w-2xl text-sm opacity-80">
-            Transparência total: o que a máquina faz, onde ela erra e o que continua sendo sua
-            decisão.
+            O que a IA faz, quais são os limites conhecidos e o que continua sob sua decisão.
           </p>
         </div>
       </header>
