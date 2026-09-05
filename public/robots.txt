@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://eupasso.lovable.app/sitemap.xml
+Sitemap: https://eu-passo.netlify.app/sitemap.xml
