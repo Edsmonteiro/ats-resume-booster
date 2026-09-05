@@ -1,9 +1,18 @@
 import { loadStripe, type Stripe } from "@stripe/stripe-js";
 
 type StripeEnv = "sandbox" | "live";
+export type ModoPagamento = "simulado" | "stripe";
 
-/** "simulado" = assinatura de teste interna, sem provedor de pagamento nem cobrança. */
-export const MODO_PAGAMENTO: "simulado" | "stripe" = "simulado";
+const modoConfigurado = import.meta.env["VITE_PAYMENTS_MODE"] as string | undefined;
+if (modoConfigurado !== "simulado" && modoConfigurado !== "stripe") {
+  throw new Error("VITE_PAYMENTS_MODE precisa ser definido como 'simulado' ou 'stripe'.");
+}
+
+/**
+ * "simulado" = assinatura de teste interna, sem cobrança.
+ * "stripe" = checkout real. O modo é configuração de deploy, não constante de código.
+ */
+export const MODO_PAGAMENTO: ModoPagamento = modoConfigurado;
 
 const clientToken = import.meta.env["VITE_PAYMENTS_CLIENT_TOKEN"] as string | undefined;
 
@@ -15,7 +24,6 @@ function paymentsEnvironment(): StripeEnv {
     "Os pagamentos ainda não estão configurados nesta versão do site. Conclua a ativação de pagamentos para liberar o checkout.",
   );
 }
-
 
 let stripePromise: Promise<Stripe | null> | null = null;
 
@@ -128,4 +136,3 @@ export function planoDe(tier: "essencial" | "pro", periodicidade: Periodicidade)
 }
 
 export type Plano = (typeof PLANOS)[number];
-
