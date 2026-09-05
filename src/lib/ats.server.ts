@@ -1,13 +1,17 @@
-import { createLovableAiGatewayProvider } from "./ai-gateway.server";
+import { createOpenAiProvider } from "./ai-gateway.server";
 import { LIMITE_CARTA } from "./ats.schemas";
 
-export const MODEL = "openai/gpt-5.6-sol";
-export const providerOptions = { lovable: { reasoningEffort: "none" } } as const;
+/**
+ * O modelo é configurável por ambiente para permitir equilibrar qualidade e custo sem
+ * alterar código. O padrão prioriza custo previsível para um SaaS de volume.
+ */
+export const MODEL = process.env["AI_MODEL"] || "gpt-5.6-luna";
+export const providerOptions = { openai: { reasoningEffort: "none" } } as const;
 
 export function modelo() {
-  const key = process.env["LOVABLE_API_KEY"];
+  const key = process.env["OPENAI_API_KEY"];
   if (!key) throw new Error("Configuração de IA ausente.");
-  return createLovableAiGatewayProvider(key)(MODEL);
+  return createOpenAiProvider(key)(MODEL);
 }
 
 export const SYSTEM_ATS =

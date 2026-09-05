@@ -19,9 +19,9 @@ export const Route = createFileRoute("/privacidade")({
         content: "Tratamento de dados, base legal, retenção e seus direitos como titular (LGPD).",
       },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "https://eupasso.lovable.app/privacidade" }],
+    links: [{ rel: "canonical", href: "https://eu-passo.netlify.app/privacidade" }],
   }),
   component: Privacidade,
 });
@@ -57,13 +57,14 @@ function Privacidade() {
           <ul className="list-disc space-y-1 pl-5">
             <li>Cadastro: e-mail, nome e cargo desejado.</li>
             <li>
-              Conteúdo enviado por você: texto do currículo, PDFs do LinkedIn e da conta Gupy.
+              Conteúdo enviado por você: texto do currículo e arquivos que você escolhe importar
+              para análise.
             </li>
-            <li>Preferências de busca: cargos, senioridade, localidade, modelo de trabalho.</li>
-            <li>Uso do produto: vagas analisadas, candidaturas acompanhadas, notas geradas.</li>
+            <li>Preferências de busca: cargos, senioridade, localidade e modelo de trabalho.</li>
+            <li>Uso do produto: vagas analisadas, candidaturas acompanhadas, notas e progresso.</li>
             <li>
-              Assinatura: status, plano e período — o pagamento é processado pelo provedor, que
-              guarda os dados do cartão. Nós não armazenamos dados de cartão.
+              Assinatura: status, plano e período — quando pagamentos reais estiverem habilitados,
+              os dados do cartão serão tratados pelo provedor de pagamento e não pelo Eu Passo.
             </li>
           </ul>
         </section>
@@ -71,18 +72,18 @@ function Privacidade() {
         <section className="space-y-2">
           <h2 className="font-display text-lg font-semibold text-foreground">Para que usamos</h2>
           <p>
-            Exclusivamente para prestar o serviço: analisar seu currículo, buscar e pontuar vagas,
-            gerar documentos e alertas. Não vendemos, alugamos nem compartilhamos seus dados com
-            recrutadores ou anunciantes.
+            Para prestar e melhorar o serviço: analisar seu currículo, comparar vagas, organizar
+            candidaturas, gerar documentos e exibir alertas configurados por você. Não vendemos nem
+            alugamos seus dados pessoais a recrutadores ou anunciantes.
           </p>
         </section>
 
         <section className="space-y-2">
           <h2 className="font-display text-lg font-semibold text-foreground">Base legal</h2>
           <p>
-            Execução de contrato (art. 7º, V) para os recursos que você solicita, e consentimento
-            (art. 7º, I) para o envio de alertas por e-mail, que pode ser desativado a qualquer
-            momento nas preferências do radar.
+            Usamos as bases legais aplicáveis ao funcionamento do serviço, incluindo execução de
+            contrato ou procedimentos preliminares relacionados ao serviço solicitado (art. 7º, V)
+            e consentimento quando uma funcionalidade depender de uma escolha opcional do usuário.
           </p>
         </section>
 
@@ -91,28 +92,32 @@ function Privacidade() {
             Inteligência artificial
           </h2>
           <p>
-            Os textos que você envia são processados por modelos de IA de terceiros para gerar as
-            análises. O conteúdo é usado apenas para produzir a resposta solicitada. Recomendamos
-            não incluir dados sensíveis (CPF, RG, dados de saúde, biometria) no currículo enviado.
+            Quando você solicita uma funcionalidade de IA, o conteúdo necessário à tarefa é enviado
+            ao provedor de inteligência artificial contratado para produzir a resposta. Não envie
+            dados sensíveis desnecessários, como CPF, RG, informações de saúde ou biometria, no
+            currículo ou nas descrições de vaga.
           </p>
         </section>
 
         <section className="space-y-2">
           <h2 className="font-display text-lg font-semibold text-foreground">
-            Compartilhamento anônimo
+            Links compartilháveis
           </h2>
           <p>
-            Links de análise compartilhável são públicos e anônimos: removemos nome, e-mail e
-            telefone antes de publicar. Só existem se você criar o link.
+            Links de análise compartilhável são públicos para quem possuir o endereço. Antes da
+            publicação, o sistema aplica anonimização ao conteúdo apresentado. Esses links só são
+            criados mediante ação do usuário e ficam vinculados à conta que os criou.
           </p>
         </section>
 
         <section className="space-y-2">
           <h2 className="font-display text-lg font-semibold text-foreground">Retenção</h2>
           <p>
-            Guardamos seus dados enquanto a conta existir. Vagas do radar seguem a janela de
-            postagem configurada (7 a 60 dias) e são arquivadas depois disso. Ao excluir a conta,
-            tudo é apagado de forma definitiva.
+            Mantemos os dados da conta enquanto forem necessários para prestar o serviço ou enquanto
+            a conta permanecer ativa, observadas obrigações legais eventualmente aplicáveis. Vagas
+            do radar respeitam a janela de busca configurada. Ao excluir a conta pelo aplicativo,
+            os registros vinculados à conta, inclusive links de análise compartilhável, são
+            removidos do banco operacional.
           </p>
         </section>
 
@@ -121,16 +126,18 @@ function Privacidade() {
           <p>
             Você pode acessar, corrigir, exportar e excluir seus dados diretamente no aplicativo:
             abra <strong className="text-foreground">Seu perfil</strong> e use a seção{" "}
-            <strong className="text-foreground">Meus dados</strong> para baixar tudo em JSON ou
-            excluir a conta.
+            <strong className="text-foreground">Meus dados</strong> para baixar seus dados em JSON
+            ou excluir a conta. Outros direitos previstos na LGPD podem ser solicitados pelos canais
+            de atendimento que forem disponibilizados pelo Eu Passo.
           </p>
         </section>
 
         <section className="space-y-2">
           <h2 className="font-display text-lg font-semibold text-foreground">Segurança</h2>
           <p>
-            Os dados ficam isolados por conta no banco, com regras de acesso por usuário. Somente
-            você enxerga o seu conteúdo.
+            Aplicamos autenticação, segregação por usuário no banco de dados e regras de acesso em
+            nível de linha para reduzir o risco de acesso indevido. Nenhum sistema é isento de risco,
+            por isso as medidas técnicas e operacionais são revisadas continuamente.
           </p>
         </section>
       </main>

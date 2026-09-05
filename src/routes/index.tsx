@@ -14,8 +14,6 @@ import { PainelHoje } from "@/components/painel-hoje";
 import { ComparadorVagas } from "@/components/comparador-vagas";
 import { CursosPanel } from "@/components/cursos-panel";
 
-
-
 import { useLocalState } from "@/lib/use-local-state";
 
 import { Rodape } from "@/components/rodape";
@@ -31,26 +29,28 @@ import { VagasPanel } from "@/components/vagas-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDadosApp } from "@/lib/use-dados";
 
+const URL_SITE = "https://eu-passo.netlify.app";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Eu passo — Currículo aprovado no ATS e vagas rastreadas" },
+      { title: "Eu Passo — Currículo, ATS e jornada de candidaturas" },
       {
         name: "description",
         content:
-          "Analise seu currículo para sistemas ATS, corrija o que trava a triagem automática e meça a compatibilidade com cada vaga.",
+          "Analise seu currículo para sistemas ATS, compare vagas e organize sua jornada de candidaturas em um só lugar.",
       },
-      { property: "og:title", content: "Eu passo — Currículo aprovado no ATS e vagas rastreadas" },
+      { property: "og:title", content: "Eu Passo — Currículo, ATS e jornada de candidaturas" },
       {
         property: "og:description",
         content:
-          "Analise seu currículo para sistemas ATS, corrija o que trava a triagem automática e meça a compatibilidade com cada vaga.",
+          "Analise seu currículo para sistemas ATS, compare vagas e organize sua jornada de candidaturas em um só lugar.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://eupasso.lovable.app/" },
+      { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: `${URL_SITE}/` },
     ],
-    links: [{ rel: "canonical", href: "https://eupasso.lovable.app/" }],
+    links: [{ rel: "canonical", href: `${URL_SITE}/` }],
   }),
   component: Index,
 });
@@ -135,7 +135,6 @@ function Index() {
               Cursos
             </TabsTrigger>
 
-
             <TabsTrigger value="linkedin" className="gap-2">
               <Linkedin className="size-4 shrink-0" />
               LinkedIn
@@ -175,9 +174,6 @@ function Index() {
           <TabsContent value="cursos">
             <CursosPanel curriculo={curriculo} setCurriculo={setCurriculo} />
           </TabsContent>
-
-
-
 
           <TabsContent value="linkedin">
             <LinkedinPanel perfil={perfilLinkedin} setPerfil={setPerfilLinkedin} />

@@ -12,6 +12,7 @@ import {
   SYSTEM_MATCH,
 } from "@/lib/ats.server";
 import { contaDaExtensao, curriculoDaConta } from "@/lib/extensao-api.server";
+import { consumirRecurso } from "@/lib/plano.server";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -46,16 +47,25 @@ export const Route = createFileRoute("/api/public/vaga-match")({
           return json({ erro: "Dados inválidos." }, 400);
         }
 
-        // Extensão conectada à conta: usa o currículo salvo no Eu Passo.
+        // Este endpoint é público apenas no sentido de ser acessível pela extensão.
+        // Toda chamada de IA exige um token de extensão válido ligado a uma conta.
         const conta = await contaDaExtensao(request);
-        if (conta && dados.curriculo.trim().length < 50) {
+        if (!conta) {
+          return json({ erro: "Conecte a extensão à sua conta do Eu Passo para analisar vagas." }, 401);
+        }
+
+        const bloqueioVaga = await consumirRecurso(conta.userId, "vaga");
+        if (bloqueioVaga) return json({ erro: bloqueioVaga.error }, 403);
+
+        // Extensão conectada à conta: usa o currículo salvo quando o payload não traz um currículo válido.
+        if (dados.curriculo.trim().length < 50) {
           const salvo = await curriculoDaConta(conta.userId);
           if (salvo.length >= 50) dados.curriculo = salvo.slice(0, 30000);
         }
 
         if (dados.curriculo.trim().length < 50) {
           return json(
-            { erro: "Nenhum currículo disponível. Conecte sua conta ou cole o currículo." },
+            { erro: "Nenhum currículo disponível. Salve seu currículo no Eu Passo antes de analisar." },
             400,
           );
         }
@@ -70,6 +80,11 @@ export const Route = createFileRoute("/api/public/vaga-match")({
           });
 
           if (!dados.comCarta) return json({ match });
+
+          const bloqueioCarta = await consumirRecurso(conta.userId, "carta");
+          if (bloqueioCarta) {
+            return json({ match, cartaErro: bloqueioCarta.error });
+          }
 
           const { object: carta } = await generateObject({
             model: modelo(),
@@ -86,7 +101,10 @@ export const Route = createFileRoute("/api/public/vaga-match")({
 
           return json({ match, carta: { ...carta, carta: limitarCarta(carta.carta) } });
         } catch (erro) {
-          console.error("vaga-match falhou", erro);
+          console.error("[Extensão] vaga-match falhou", {
+            userId: conta.userId,
+            erro,
+          });
           return json({ erro: "Não foi possível analisar agora." }, 502);
         }
       },

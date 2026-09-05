@@ -12,19 +12,20 @@ import type { EntradaHistorico } from "@/components/historico-analises";
 const TITULO = "Demonstração: análise ATS de um currículo real";
 const DESCRICAO =
   "Veja como a análise ATS funciona usando um currículo de exemplo já preenchido — nota, travas de triagem, palavras-chave ausentes e reescritas, sem enviar seus dados.";
+const URL_SITE = "https://eu-passo.netlify.app";
 
 export const Route = createFileRoute("/demo")({
   head: () => ({
     meta: [
-      { title: `${TITULO} | Eu passo` },
+      { title: `${TITULO} | Eu Passo` },
       { name: "description", content: DESCRICAO },
       { property: "og:title", content: TITULO },
       { property: "og:description", content: DESCRICAO },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://eupasso.lovable.app/demo" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: `${URL_SITE}/demo` },
+      { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "https://eupasso.lovable.app/demo" }],
+    links: [{ rel: "canonical", href: `${URL_SITE}/demo` }],
   }),
   component: Demo,
 });
@@ -55,20 +56,19 @@ function Demo() {
               Eu Passo
             </Link>
             <Button asChild variant="secondary" size="sm">
-              <Link to="/">
+              <Link to="/auth">
                 <ArrowLeft className="size-4" />
-                Usar com meu currículo
+                Criar conta grátis
               </Link>
             </Button>
           </div>
           <h1 className="mt-4 max-w-2xl font-display text-3xl leading-tight font-bold sm:text-4xl">
-            Demonstração pública: teste sem enviar seus dados
+            Demonstração pública: explore sem enviar seus dados
           </h1>
           <p className="mt-3 max-w-2xl text-sm opacity-80 sm:text-base">
-            Esta página já vem com um currículo fictício e a análise pronta. Explore as abas, os
-            destaques no texto e as reescritas — e, se quiser, clique em{" "}
-            <strong>Analisar para ATS</strong> para rodar a análise de verdade neste exemplo. Nada
-            aqui é salvo na sua conta.
+            Esta página já vem com um currículo fictício e uma análise pronta. Explore a nota, as
+            travas de ATS, os destaques e as reescritas. Para gerar uma nova análise com IA, entre
+            ou crie uma conta grátis — assim conseguimos proteger sua cota e seus dados.
           </p>
         </div>
       </header>
@@ -85,12 +85,12 @@ function Demo() {
         <div className="mt-10 rounded-lg border bg-secondary/30 p-5 text-center">
           <p className="font-display text-lg font-semibold">Pronto para o seu currículo?</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            A análise real leva menos de um minuto e aponta exatamente o que corrigir antes de se
-            candidatar.
+            Crie uma conta grátis para analisar seu currículo, salvar seu progresso e continuar a
+            jornada de candidaturas.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             <Button asChild>
-              <Link to="/">Analisar meu currículo</Link>
+              <Link to="/auth">Criar conta grátis</Link>
             </Button>
             <Button asChild variant="outline">
               <Link to="/guia-ats">Ler o guia ATS</Link>

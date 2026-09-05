@@ -2,14 +2,40 @@ import { getRequest } from "@tanstack/react-start/server";
 
 import { limiteDe, planoNecessario, ROTULO_TIER, tierDoPrice, type Recurso, type Tier } from "./plano";
 
-export function ambientePagamento(): "live" | "sandbox" {
-  return process.env["STRIPE_LIVE_API_KEY"] ? "live" : "sandbox";
+export type AmbientePagamento = "live" | "sandbox";
+
+/**
+ * Ambiente financeiro explícito. Em produção, ausência/valor inválido bloqueia a leitura de planos
+ * em vez de inferir o modo pela presença de uma chave do Stripe.
+ */
+export function ambientePagamento(): AmbientePagamento {
+  const modo = process.env["PAYMENTS_MODE"];
+  if (modo === "live" || modo === "sandbox") return modo;
+
+  // Mantém desenvolvimento local utilizável sem abrir uma exceção silenciosa em produção.
+  if (process.env["NODE_ENV"] !== "production") return "sandbox";
+
+  throw new Error("PAYMENTS_MODE precisa ser definido como 'sandbox' ou 'live'.");
+}
+
+/**
+ * Assinatura simulada só existe fora do deploy de produção e somente em sandbox.
+ * No Netlify, CONTEXT=production identifica o site principal.
+ */
+export function assinaturaSimuladaPermitida(): boolean {
+  if (ambientePagamento() !== "sandbox") return false;
+
+  const contextoNetlify = process.env["CONTEXT"];
+  if (contextoNetlify === "production") return false;
+  if (contextoNetlify === "deploy-preview" || contextoNetlify === "branch-deploy") return true;
+
+  return process.env["NODE_ENV"] !== "production";
 }
 
 /** Tier atual do usuário, lido da assinatura vigente. */
 export async function tierDoUsuario(userId: string): Promise<Tier> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from("subscriptions")
     .select("price_id, status, current_period_end")
     .eq("user_id", userId)
@@ -17,6 +43,11 @@ export async function tierDoUsuario(userId: string): Promise<Tier> {
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  if (error) {
+    console.error("[Plano] Falha ao consultar assinatura", { userId, message: error.message });
+    return "gratis";
+  }
 
   if (!data) return "gratis";
   const fim = data.current_period_end ? new Date(data.current_period_end) : null;
@@ -58,7 +89,18 @@ export async function consumirRecurso(
     _recurso: recurso,
     _limite: limite,
   });
-  if (error) return null; // nunca bloqueia por falha de contagem
+
+  if (error) {
+    // Falha fechada: não libera consumo pago/gratuito quando não foi possível registrar a cota.
+    console.error("[Plano] Falha ao consumir cota", {
+      userId,
+      recurso,
+      limite,
+      message: error.message,
+    });
+    return { error: "Não foi possível validar seu limite de uso agora. Tente novamente em instantes." };
+  }
+
   if (data === false) return { error: mensagemLimite(tier) };
   return null;
 }
@@ -89,7 +131,9 @@ export async function usuarioOpcional(): Promise<string | null> {
   }
 }
 
-/** Cota para funções públicas: visitante segue livre, usuário logado respeita o plano. */
+/**
+ * Compatibilidade para fluxos públicos legados. Não deve ser usado em endpoints com custo de IA.
+ */
 export async function consumirRecursoOpcional(recurso: Recurso): Promise<{ error: string } | null> {
   const userId = await usuarioOpcional();
   if (!userId) return null;

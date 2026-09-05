@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateObject } from "ai";
 
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   analisarCurriculoInput,
   analisarVagaInput,
@@ -21,14 +22,15 @@ import {
   SYSTEM_MATCH,
   SYSTEM_REVISAO,
 } from "./ats.server";
-import { consumirRecursoOpcional } from "./plano.server";
+import { consumirRecurso } from "./plano.server";
 
 export type { AtsAnalysis, CartaApresentacao, CurriculoRevisado, JobMatch } from "./ats.schemas";
 
 export const analisarCurriculo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => analisarCurriculoInput.parse(input))
-  .handler(async ({ data }) => {
-    const bloqueio = await consumirRecursoOpcional("ats");
+  .handler(async ({ data, context }) => {
+    const bloqueio = await consumirRecurso(context.userId, "ats");
     if (bloqueio) throw new Error(bloqueio.error);
 
     const { object } = await generateObject({
@@ -42,9 +44,10 @@ export const analisarCurriculo = createServerFn({ method: "POST" })
   });
 
 export const analisarVaga = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => analisarVagaInput.parse(input))
-  .handler(async ({ data }) => {
-    const bloqueio = await consumirRecursoOpcional("vaga");
+  .handler(async ({ data, context }) => {
+    const bloqueio = await consumirRecurso(context.userId, "vaga");
     if (bloqueio) throw new Error(bloqueio.error);
 
     const { object } = await generateObject({
@@ -58,9 +61,10 @@ export const analisarVaga = createServerFn({ method: "POST" })
   });
 
 export const gerarCarta = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => gerarCartaInput.parse(input))
-  .handler(async ({ data }) => {
-    const bloqueio = await consumirRecursoOpcional("carta");
+  .handler(async ({ data, context }) => {
+    const bloqueio = await consumirRecurso(context.userId, "carta");
     if (bloqueio) throw new Error(bloqueio.error);
 
     const { object } = await generateObject({
@@ -80,9 +84,10 @@ export const gerarCarta = createServerFn({ method: "POST" })
   });
 
 export const gerarCurriculoRevisado = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => gerarCurriculoRevisadoInput.parse(input))
-  .handler(async ({ data }) => {
-    const bloqueio = await consumirRecursoOpcional("curriculo_revisado");
+  .handler(async ({ data, context }) => {
+    const bloqueio = await consumirRecurso(context.userId, "curriculo_revisado");
     if (bloqueio) throw new Error(bloqueio.error);
 
     const { object } = await generateObject({
