@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { anonimizarLista, anonimizarTexto } from "@/lib/anonimizar";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -60,8 +61,9 @@ function clientePublico() {
 }
 
 export const criarLinkAnalise = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((entrada: unknown) => compartilharInput.parse(entrada))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const dados = {
       pontosFortes: anonimizarLista(data.pontosFortes),
       problemasAts: data.problemasAts.map((p) => ({
@@ -92,7 +94,13 @@ export const criarLinkAnalise = createServerFn({ method: "POST" })
       .select("id")
       .single();
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[Compartilhar] Falha ao criar análise pública", {
+        userId: context.userId,
+        message: error.message,
+      });
+      throw new Error("Não foi possível criar o link compartilhável agora.");
+    }
     return { id: linha.id as string };
   });
 
