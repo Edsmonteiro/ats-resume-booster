@@ -81,16 +81,19 @@ export const criarLinkAnalise = createServerFn({ method: "POST" })
     };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const registro = {
+      user_id: context.userId,
+      score: Math.round(data.score),
+      score_antes: typeof data.scoreAntes === "number" ? Math.round(data.scoreAntes) : null,
+      resumo: anonimizarTexto(data.resumo),
+      cargo_desejado: anonimizarTexto(data.cargoDesejado),
+      dados,
+    };
     const { data: linha, error } = await supabaseAdmin
       .from("analises_publicas")
-      .insert({
-        score: Math.round(data.score),
-        score_antes: typeof data.scoreAntes === "number" ? Math.round(data.scoreAntes) : null,
-        resumo: anonimizarTexto(data.resumo),
-        cargo_desejado: anonimizarTexto(data.cargoDesejado),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        dados: dados as any,
-      })
+      // Os tipos gerados serão sincronizados ao final da rodada de migrations.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .insert(registro as any)
       .select("id")
       .single();
 
