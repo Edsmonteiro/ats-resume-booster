@@ -3,8 +3,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 import { MESES_POR_PRICE } from "./plano";
+import { assinaturaSimuladaPermitida } from "./plano.server";
 
 type Resultado = { ok: true } | { error: string };
+
+function validarModoSimulado(): Resultado | null {
+  if (assinaturaSimuladaPermitida()) return null;
+  return { error: "A ativação simulada está disponível apenas em ambientes de desenvolvimento e Deploy Preview." };
+}
 
 export const ativarAssinaturaSimulada = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -13,6 +19,9 @@ export const ativarAssinaturaSimulada = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data, context }): Promise<Resultado> => {
+    const bloqueioAmbiente = validarModoSimulado();
+    if (bloqueioAmbiente) return bloqueioAmbiente;
+
     const meses = MESES_POR_PRICE[data.priceId] ?? 1;
 
     const inicio = new Date();
@@ -38,13 +47,23 @@ export const ativarAssinaturaSimulada = createServerFn({ method: "POST" })
       { onConflict: "stripe_subscription_id" },
     );
 
-    if (error) return { error: "Não foi possível ativar o plano simulado." };
+    if (error) {
+      console.error("[Plano] Falha ao ativar assinatura simulada", {
+        userId: context.userId,
+        priceId: data.priceId,
+        message: error.message,
+      });
+      return { error: "Não foi possível ativar o plano simulado." };
+    }
     return { ok: true };
   });
 
 export const cancelarAssinaturaSimulada = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<Resultado> => {
+    const bloqueioAmbiente = validarModoSimulado();
+    if (bloqueioAmbiente) return bloqueioAmbiente;
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { error } = await supabaseAdmin
@@ -54,8 +73,15 @@ export const cancelarAssinaturaSimulada = createServerFn({ method: "POST" })
         current_period_end: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq("stripe_subscription_id", `sim_${context.userId}`);
+      .eq("stripe_subscription_id", `sim_${context.userId}`)
+      .eq("environment", "sandbox");
 
-    if (error) return { error: "Não foi possível cancelar o plano simulado." };
+    if (error) {
+      console.error("[Plano] Falha ao cancelar assinatura simulada", {
+        userId: context.userId,
+        message: error.message,
+      });
+      return { error: "Não foi possível cancelar o plano simulado." };
+    }
     return { ok: true };
   });
