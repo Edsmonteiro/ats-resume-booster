@@ -12,6 +12,7 @@ import {
   type ConquistaSugerida,
 } from "./conquistas.schemas";
 import { SYSTEM_CONQUISTAS } from "./conquistas.server";
+import { consumirRecurso } from "./plano.server";
 
 export type { Conquista, ConquistaSugerida } from "./conquistas.schemas";
 
@@ -75,7 +76,11 @@ export const excluirConquista = createServerFn({ method: "POST" })
 export const sugerirConquistas = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => sugerirConquistasInput.parse(input))
-  .handler(async ({ data }): Promise<ConquistaSugerida[]> => {
+  .handler(async ({ data, context }): Promise<ConquistaSugerida[]> => {
+    // A extração de conquistas é uma análise do currículo e compartilha a mesma cota de ATS.
+    const bloqueio = await consumirRecurso(context.userId, "ats");
+    if (bloqueio) throw new Error(bloqueio.error);
+
     const { object } = await generateObject({
       model: modelo(),
       schema: sugestoesConquistasSchema,
